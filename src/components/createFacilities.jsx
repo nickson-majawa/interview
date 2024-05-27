@@ -45,10 +45,10 @@ const CreateFacilities = () => {
       );
       if (response.status === 201) {
         setSuccessMessage("Facility added successfully!");
-        setFacilityName("");
-        setCommonName("");
-        setSelectedDistrict("");
-        setSelectedClient("");
+        setFacilityName(""); // Reset form fields
+        setCommonName(""); // Reset form fields
+        setSelectedDistrict(""); // Reset form fields
+        setSelectedClient(""); // Reset form fields
       }
     } catch (error) {
       setErrorMessage("Failed to add facility. Please try again.");

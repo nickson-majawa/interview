@@ -13,8 +13,6 @@ const Facilities = () => {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFacilities, setFilteredFacilities] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(20);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,15 +62,6 @@ const Facilities = () => {
     setFilteredFacilities(filtered);
   }, [facilities, selectedDistrict, searchTerm]);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredFacilities.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -84,7 +73,39 @@ const Facilities = () => {
           <button className="btn btn-primary">Add New Facility</button>
         </Link>
       </div>
-      <div className="row mb-3">{/* Your filtering options */}</div>
+      <div className="row mb-3">
+        <div className="col-md-4">
+          <select
+            className="form-select"
+            value={selectedDistrict}
+            onChange={(e) => setSelectedDistrict(e.target.value)}
+          >
+            <option value="">Select District</option>
+            {Object.entries(districts).map(([id, name]) => (
+              <option key={id} value={id}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-md-2">
+          <button
+            className="btn btn-secondary"
+            onClick={() => setSelectedDistrict(selectedDistrict)}
+          >
+            Filter by District
+          </button>
+        </div>
+        <div className="col-md-6">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by Facility Name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
       <table className="table table-striped">
         <thead>
           <tr>
@@ -95,7 +116,7 @@ const Facilities = () => {
           </tr>
         </thead>
         <tbody>
-          {currentItems.map((facility) => (
+          {filteredFacilities.map((facility) => (
             <tr key={facility.id}>
               <td>{facility.facility_name}</td>
               <td>{districts[facility.district_id] || "Unknown"}</td>
@@ -109,20 +130,6 @@ const Facilities = () => {
           ))}
         </tbody>
       </table>
-      <ul className="pagination">
-        {Array.from({
-          length: Math.ceil(filteredFacilities.length / itemsPerPage),
-        }).map((_, index) => (
-          <li
-            key={index}
-            className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
-          >
-            <button className="page-link" onClick={() => paginate(index + 1)}>
-              {index + 1}
-            </button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };
